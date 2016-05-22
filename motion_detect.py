@@ -25,7 +25,7 @@ from PIL import Image
 # diskSpaceToReserve - Delete oldest images to avoid filling disk. How much byte to keep free on disk.
 # cameraSettings     - "" = no extra settings; "-hf" = Set horizontal flip of image; "-vf" = Set vertical flip; "-hf -vf" = both horizontal and vertical flip
 threshold = 10
-sensitivity = 45
+# sensitivity = 55 - Changed to an parameter in the "motion" function.
 forceCapture = True
 forceCaptureTime = 60 * 60 # Once an hour
 filepath = "/home/pi/picam"
@@ -84,6 +84,7 @@ def captureTestImage(settings, width, height):
 def saveImage(settings, width, height, quality, diskSpaceToReserve):
     keepDiskSpaceFree(diskSpaceToReserve)
     time = datetime.now()
+    #   IMAGE TITLE
     filename = filepath + "/" + filenamePrefix + "-%04d%02d%02d-%02d%02d%02d.jpg" % (time.year, time.month, time.day, time.hour, time.minute, time.second)
     subprocess.call("raspistill %s -w %s -h %s -t 200 -e jpg -q %s -n -o %s" % (settings, width, height, quality, filename), shell=True)
     print("Captured %s" % filename)
@@ -104,7 +105,10 @@ def getFreeSpace():
     du = st.f_bavail * st.f_frsize
     return du
 
-def motion():
+# This function returns true of false, on motion detection.
+# Reworked by nacho to fit specific needs.
+# Credit goes to original writers.
+def motion(sensitivity):
     # Get first image
     image1, buffer1 = captureTestImage(cameraSettings, testWidth, testHeight)
 
@@ -162,9 +166,9 @@ def motion():
         if takePicture:
             lastCapture = time.time()
             #   saveImage(cameraSettings, saveWidth, saveHeight, saveQuality, diskSpaceToReserve)
-            return False
-        else:
             return True
+        else:
+            return False
         
         # Swap comparison buffers
         image1 = image2
