@@ -4,6 +4,7 @@ import Twitter
 import motion_detect
 from datetime import datetime
 
+
 # !!IMPORTANT!! LOOKUP piCamera MODULE !!IMPORTANT!!
 # Take picture. Nada mas.
 def take_picture():
@@ -13,9 +14,19 @@ def take_picture():
         camera.start_preview()
         # Camera warm-up time
         time.sleep(2)
-        camera.capture("static/ext/foo.jpg")
+        camera.capture("foo.jpg")
 
-# Waste of time. Takes pictures, let's you choose one of the ones you took... Tweet it with the time and your written tweet.
+
+#   Function to record using PiCamera
+def take_video(video_description):
+    with picamera.PiCamera() as camera:
+        camera.resolution = (640, 480)
+        camera.start_recording('%s.h264' % (video_description))
+        camera.wait_recording(60)
+        camera.stop_recording()
+
+        
+# Waste of time. Takes pictures, let's you choose one of them... Tweet it with the time and your written tweet.
 def picture_to_twitter():
     picture_id = 1
     while picture_id < 2:
@@ -49,26 +60,3 @@ def detect_motion(sensitivity):
     # Side note. Sensitivty at 100 works great in day-light.
     motionState = motion_detect.motion(sensitivity)
     return motionState
-
-#   Function to take a picture if motion detection is True for X amount of time.
-#   Use the invterval parameter to set the time. (1 check every 2 seconds)
-#   Example. if interval = 5; it will take a picture if motion is detected for 10 seconds. (5 x 2)
-def motion_with_picture(interval):
-    i = 0
-    
-    while True:
-        current_time = datetime.now().strftime('%Y-%M-%D %H:%M:%S')
-        if detect_motion(100):
-            i += 1
-            print(str(current_time))
-            if i is interval:
-                #   This part can be replaced with any other function.
-                #   Example -> You need to check if something a hand is inside your machine.
-                #   If motion was detected for 5 seconds -> then -> activate Movie.
-                print("Motion has been detected for too long! Somethings fishy..\nTaking a photo just incase. Please wait..")
-                take_picture()
-        else:
-            print("No motion")
-            i = 0
-
-motion_with_picture(3)
