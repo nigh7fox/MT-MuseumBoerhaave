@@ -143,9 +143,61 @@ def write_route(routes):
         route.close()
     finally:
         route.close()
-                    
+
+def select_route():
+    routes_list = []
+    try:
+        with open("disease_routes.txt", "r") as routes:
+            for numbers in routes:
+                routes_list.append(numbers)
+    except FileNotFoundError:
+        print("The file you are asking me to write to does not exist!")
+        routes.close()
+    finally:
+        return routes_list
+        routes.close()
+
+#   STARTS AT 0   
+def read_route(route_number):
+    routes_list = select_route()
+    return routes_list[route_number]
+
+def compare_routes():
+    button1 = button_state(switch_pin_obj1)
+    button2 = button_state(button_pin_tool1)
+
+    route1 = read_route(0)
+    route2 = read_route(1)
+    buttons_pressed = False
+    route_choice_picked = False
+    
+    active_tool = get_active_tool(0.5)
+    while True:
+        for numbers in route1:
+            if active_tool is numbers:
+                print("do something")
+            else:
+                print("you weren't supposed to use that button")
+
+def movies_list():
+    #   GENERATOR EXAMPLE FUNCTION.
+    ml = [movie1,movie2]
+    movie1 = "lel"
+    movie2 = "lol"
+
+    for movie in ml:
+        yield(movie)
+
 def start_game():
     #   INSERT MAGIC HERE.
     write_route(log_game_route(0.5))
 
-start_game()
+while True:
+    now = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+    detect = detect_player(2, 115)
+    if detect is True:
+        Camera.take_picture()
+        print("Took photo at @ %s" % (now))
+    else:
+        print(detect)
+
