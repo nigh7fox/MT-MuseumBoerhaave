@@ -5,14 +5,10 @@ from datetime import datetime
 import Rpinput
 import os
 
-pin1 = 4
-pin2 = 18
-
 
 #   USE THIS FUNCTION TO START THE GAME.
 def start_game():
-    rpi = Rpinput.RpiBoerhaave(23, 0, 4, 18)
-    while True:
-        rpi.game_ready(4, 18)
+    rpi = Rpinput.RpiBoerhaave(16, 26, 17, 18)
+    rpi.turn_list_on()
 
 start_game()

@@ -13,6 +13,7 @@ class RpiBoerhaave(object):
         self.led_pin1 = led_pin1
         self.led_pin2 = led_pin2
         GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
         GPIO.setup(self.button_one, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.button_two, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.led_pin1, GPIO.OUT)
@@ -41,6 +42,7 @@ class RpiBoerhaave(object):
             button1_tool = self.button_state(self.button_one)
             button2_tool = self.button_state(self.button_two)
             tool_used = False
+
             if tool_used is False:
                 if button1_tool is True:
                     tool_used = True
@@ -52,7 +54,7 @@ class RpiBoerhaave(object):
                     return 2  # BUTTON 2 PRESSED AND ...
                 else:
                     tool_used = False
-                    return 0  # NO BUTTON IS BEING PRESSED.
+                    return None  # NO BUTTON IS BEING PRESSED.
         except KeyboardInterrupt:
             GPIO.cleanup()
         GPIO.cleanup()
@@ -71,36 +73,21 @@ class RpiBoerhaave(object):
                 return False
         return True
 
-    def log_game_route(self, check_delay):
-        #   LOG THE GAME ROUTE - SAVE THE ROUTE OF THE GAME IN A LIST/TXT FILE.
-        #   SELECT ROUTES LEAD TO ACCORDING CONSQUENCES.
-        #   OK. GO.
-        routes = []
-
-        button1 = self.button_state(self.button_one)
-        button2 = self.button_state(self.button_two)
-        button_list = [button1, button2]
-        button_times_pressed = 0
-        MAX_INPUT = 4  # BASICLY.... THE ROUTE OF THE LENGTH.
-
-        while button_times_pressed < MAX_INPUT:
-            active_tool = self.get_active_button(check_delay)
-            if active_tool is 1 or active_tool is 2:
-                routes.append(active_tool)
-                button_times_pressed += 1
-            else:
-                print("Waiting for input")
-        GPIO.cleanup()
-        return routes
-
     def turn_light_on(self, led_pin):
         self.remove_static()
-        while True:
-            try:
-                time.sleep(0.2)
-                GPIO.output(led_pin, True)
-            except KeyboardInterrupt:
-                GPIO.cleanup()
+        try:
+            time.sleep(0.2)
+            GPIO.output(led_pin, True)
+        except KeyboardInterrupt:
+            GPIO.cleanup()
+
+    def turn_light_off(self, led_pin):
+        self.remove_static()
+        try:
+            time.sleep(0.2)
+            GPIO.output(led_pin, False)
+        except KeyboardInterrupt:
+            GPIO.cleanup()
 
     def movies_list(self):
         #   GENERATOR EXAMPLE FUNCTION.
@@ -112,15 +99,30 @@ class RpiBoerhaave(object):
             yield (movie)
         self.remove_static()
 
-    def game_ready(self, led_ready_pin, led_not_ready_pin):
+    def game_ready(self):
         try:
-            if self.detect_player(2, 150):
-                time.sleep(0.2)
-                GPIO.output(led_ready_pin, True)
-            else:
-                time.sleep(0.2)
-                GPIO.output(led_not_ready_pin)
-                print("No one wants to play!")
+            while True:
+                detect = self.detect_player(1, 200)
+                if detect is True:
+                    self.turn_light_off(self.led_pin2)
+                    time.sleep(0.2)
+                    self.turn_light_on(self.led_pin1)
+                else:
+                    self.turn_light_on(self.led_pin2)
+                    time.sleep(0.2)
+                    self.turn_light_off(self.led_pin1)
         except KeyboardInterrupt:
             GPIO.cleanup()
         GPIO.cleanup()
+
+    def light_list_one(self):
+        led1 = self.led_pin1
+        led2 = self.led_pin2
+
+        light_list = [led1, led2]
+        return light_list
+
+    def turn_list_on(self):
+        list_one = self.light_list_one()
+        for leds in list_one:
+            self.turn_light_on(leds)
