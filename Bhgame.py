@@ -54,9 +54,11 @@ def play_game():
     ziek_route = movie_route[4]
     route_selected = False
 
-    play_film(movie_route[0])
+    #   play_film(movie_route[0])
+    print("video1")
     time.sleep(1)
-    play_film(movie_route[1])
+    #   play_film(movie_route[1])
+    print("video2")
     time.sleep(1)
 
     print("Want to get infected?")

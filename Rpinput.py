@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 from datetime import datetime
+import Twitter
 import Camera
 import os
 import Bhgame as bhgame
@@ -117,6 +118,7 @@ class RpiBoerhaave(object):
                     self.led_ready_state()
                     if game_played is False:
                         bhgame.play_game()
+                        Camera.picture_to_twitter()
                         game_played = True
                     else:
                         break

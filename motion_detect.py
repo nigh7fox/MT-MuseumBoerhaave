@@ -68,6 +68,7 @@ testBorders = [ [[1,testWidth],[1,testHeight]] ]  # [ [[start pixel on left side
 # debug mode should only be turned on while testing the parameters above
 debugMode = False # False or True
 
+
 # Capture a small test image (for motion detection)
 def captureTestImage(settings, width, height):
     command = "raspistill %s -w %s -h %s -t 200 -e bmp -n -o -" % (settings, width, height)
@@ -80,6 +81,7 @@ def captureTestImage(settings, width, height):
     imageData.close()
     return im, buffer
 
+
 # Save a full size image to disk
 def saveImage(settings, width, height, quality, diskSpaceToReserve):
     keepDiskSpaceFree(diskSpaceToReserve)
@@ -88,6 +90,7 @@ def saveImage(settings, width, height, quality, diskSpaceToReserve):
     filename = filepath + "/" + filenamePrefix + "-%04d%02d%02d-%02d%02d%02d.jpg" % (time.year, time.month, time.day, time.hour, time.minute, time.second)
     subprocess.call("raspistill %s -w %s -h %s -t 200 -e jpg -q %s -n -o %s" % (settings, width, height, quality, filename), shell=True)
     print("Captured %s" % filename)
+
 
 # Keep free space above given level
 def keepDiskSpaceFree(bytesToReserve):
@@ -99,11 +102,13 @@ def keepDiskSpaceFree(bytesToReserve):
                 if (getFreeSpace() > bytesToReserve):
                     return
 
+
 # Get available disk space
 def getFreeSpace():
     st = os.statvfs(filepath + "/")
     du = st.f_bavail * st.f_frsize
     return du
+
 
 # This function returns true of false, on motion detection.
 # Reworked by nacho to fit specific needs.

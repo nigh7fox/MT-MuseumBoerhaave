@@ -15,11 +15,11 @@ twitter = Twython(APP_KEY, APP_SECRET, ACCESS_TOKEN, ACCESS_KEY)
 
 
 def tweet_with_photo(url):
-    user_tweet = input("What do you want your tweet to say?: ")
+    user_tweet = "This motherfucker just played my motherfucking game! This is motherfucking great! YES! @"
     try:
         photo = open(str(url), 'rb')
         response = twitter.upload_media(media=photo)
-        twitter.update_status(status=user_tweet + " tweeted@ " + time, media_ids=[response['media_id']])
+        twitter.update_status(status=user_tweet + time, media_ids=[response['media_id']])
     except twython.TwythonError:
         print("Error has occurred while uploading tweet.. this is bad.")
     else:
