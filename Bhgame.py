@@ -3,15 +3,16 @@ from datetime import datetime
 import Twitter
 import Rpinput
 import random
+import os
 
 
 def game_list():
     #   INDIVIDUAL MOVIES
 
-    default_intro = "film1.mp4"
-    default_second_film = "film2.mp4"
-    movie_schoon_resultaat = "resulaat_schoon.mp4"
-    movie_niet_schoon_resultaat = "resultaat_niet_schoon.mp4"
+    default_intro = "film1"
+    default_second_film = "film2"
+    movie_schoon_resultaat = "film3.mp4"
+    movie_niet_schoon_resultaat = "film4.mp4"
     movie_infectie = "infectie_film.mp4"
     movie_wel_schoon_spoelen = "resulaat_schoon.mp4"
     movie_niet_schoon_spoelen = "resultaat_niet_schoon.mp4"
@@ -42,6 +43,10 @@ def unpack_movies(movie_list):
         print(films)
 
 
+def play_film(film_name):
+    os.system("omxplayer %s.mp4" % film_name)
+
+
 def play_game():
     #   MAGIC.
     movie_route = game_list()
@@ -49,10 +54,11 @@ def play_game():
     ziek_route = movie_route[4]
     route_selected = False
 
-    print(movie_route[0])
-    time.sleep(2)
-    print(movie_route[1])
-    time.sleep(2)
+    play_film(movie_route[0])
+    time.sleep(1)
+    play_film(movie_route[1])
+    time.sleep(1)
+
     print("Want to get infected?")
 
     while route_selected is False:
@@ -75,5 +81,3 @@ def play_game():
             elif randnum_infectie is 3:
                 wel_infectie_list = ziek_route[3]
                 unpack_movies(wel_infectie_list)
-
-play_game()

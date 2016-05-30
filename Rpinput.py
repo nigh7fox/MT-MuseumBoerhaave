@@ -3,6 +3,8 @@ import time
 from datetime import datetime
 import Camera
 import os
+import Bhgame as bhgame
+import thread
 
 
 class RpiBoerhaave(object):
@@ -59,12 +61,13 @@ class RpiBoerhaave(object):
             GPIO.cleanup()
         GPIO.cleanup()
 
-    def detect_player(self, interval, sensitivity):
+    def detect_player(self, sensitivity):
         #   USED TO DETECT WETHER A PLAYER IS STANDING INFRONT OF THE CAMERA.
         #   INTERVAL: THE AMOUNT OF TIME YOU WANT TO WAIT BEFORE DETERMINING THAT A USER IS THERE.
         #   SENSITIVITY: DEPENDING ON THE AMOUNT OF LIGHT THAT THE CAMERA IS EXPOSED TOO.
         self.remove_static()
         detection_count = 0
+        interval = 2
         while detection_count < interval:
             if Camera.detect_motion(sensitivity) is True:
                 detection_count += 1
@@ -89,40 +92,38 @@ class RpiBoerhaave(object):
         except KeyboardInterrupt:
             GPIO.cleanup()
 
-    def movies_list(self):
-        #   GENERATOR EXAMPLE FUNCTION.
-        movie1 = "film1.mp4"
-        movie2 = "film2.mp4"
-        ml = [movie1, movie2]
+    def led_ready_state(self):
+        self.turn_light_off(self.led_pin2)
+        time.sleep(0.2)
+        self.turn_light_on(self.led_pin1)
 
-        for movie in ml:
-            yield (movie)
-        self.remove_static()
+    def led_not_ready_state(self):
+        self.turn_light_off(self.led_pin1)
+        time.sleep(0.2)
+        self.turn_light_on(self.led_pin2)
+
+    def player_is_present(self, sensitivity):
+        if self.detect_player(sensitivity) is True:
+            return True
+        else:
+            return False
 
     def game_ready(self):
+        game_played = False
         try:
             while True:
-                detect = self.detect_player(1, 200)
-                if detect is True:
-                    self.turn_light_off(self.led_pin2)
-                    time.sleep(0.2)
-                    self.turn_light_on(self.led_pin1)
-                else:
-                    self.turn_light_on(self.led_pin2)
-                    time.sleep(0.2)
-                    self.turn_light_off(self.led_pin1)
+                detect = self.player_is_present(100)
+                while detect is True:
+                    self.led_ready_state()
+                    if game_played is False:
+                        bhgame.play_game()
+                        game_played = True
+                    else:
+                        break
+                    time.sleep(1)
+                print("Waiting")
+                self.led_not_ready_state()
         except KeyboardInterrupt:
             GPIO.cleanup()
         GPIO.cleanup()
 
-    def light_list_one(self):
-        led1 = self.led_pin1
-        led2 = self.led_pin2
-
-        light_list = [led1, led2]
-        return light_list
-
-    def turn_list_on(self):
-        list_one = self.light_list_one()
-        for leds in list_one:
-            self.turn_light_on(leds)
