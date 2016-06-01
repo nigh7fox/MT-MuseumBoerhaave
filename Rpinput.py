@@ -21,6 +21,7 @@ class RpiBoerhaave(object):
         GPIO.setup(self.button_two, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.led_pin1, GPIO.OUT)
         GPIO.setup(self.led_pin2, GPIO.OUT)
+        GPIO.setup(self.ldr_pin, GPIO.OUT)
 
     def remove_static(self):
         pass
@@ -31,10 +32,29 @@ class RpiBoerhaave(object):
         time.sleep(0.1)
 
         GPIO.setup(self.ldr_pin, GPIO.IN)
+        try:
+            while True:
+                while GPIO.event_detected(self.ldr_pin) is False:
+                    return True
+                return False
+        except KeyboardInterrupt:
+            GPIO.cleanup()
+            GPIO.remove_event_detect(self.ldr_pin)
+
+    def ldr_state(self):
+        GPIO.setup(self.ldr_pin, GPIO.OUT)
+        GPIO.output(self.ldr_pin, GPIO.LOW)
+        time.sleep(0.1)
+
+        GPIO.setup(self.ldr_pin, GPIO.IN)
 
         while GPIO.input(self.ldr_pin) is GPIO.LOW:
             return True
         return False
+
+    def get_pin_state(self):
+        self.remove_static()
+        print("Button pin %s pressed" % str(self.button_one))
 
     def button_state(self, button_pin):
         input_state = GPIO.input(button_pin)
@@ -73,17 +93,16 @@ class RpiBoerhaave(object):
             GPIO.cleanup()
         GPIO.cleanup()
 
-    def detect_player(self, interval, sensitivity):
+    def detect_player(self, interval):
         #   USED TO DETECT WETHER A PLAYER IS STANDING INFRONT OF THE CAMERA.
         #   INTERVAL: THE AMOUNT OF TIME YOU WANT TO WAIT BEFORE DETERMINING THAT A USER IS THERE.
         #   SENSITIVITY: DEPENDING ON THE AMOUNT OF LIGHT THAT THE CAMERA IS EXPOSED TOO.
         self.remove_static()
-        detection_count = 0
+        detection_count = 0  # NO LIGHT.
         while detection_count < interval:
-            if Camera.detect_motion(sensitivity) is True:
+            if self.ldr_state() is False:
                 detection_count += 1
             else:
-                detection_count = 0
                 return False
         return True
 
@@ -112,28 +131,3 @@ class RpiBoerhaave(object):
         self.turn_light_off(self.led_pin1)
         time.sleep(0.2)
         self.turn_light_on(self.led_pin2)
-
-    def player_is_present(self, interval, sensitivity):
-        if self.detect_player(interval, sensitivity) is True:
-            return True
-        else:
-            return False
-
-    def game_ready(self):
-        game_played = False
-        try:
-            detect = self.player_is_present(2, 225)
-            while detect is True:
-                self.led_ready_state()
-                if game_played is False:
-                    bhgame.play_game()
-                    Camera.picture_to_twitter()
-                    game_played = True
-                else:
-                    break
-                time.sleep(1)
-            print("Waiting")
-            self.led_not_ready_state()
-        except KeyboardInterrupt:
-            GPIO.cleanup()
-
