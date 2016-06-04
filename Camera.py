@@ -28,9 +28,10 @@ def take_video(video_description):
         
 # Waste of time. Takes pictures, let's you choose one of them... Tweet it with the time and your written tweet.
 def picture_to_twitter():
+    print("Taking your picture smile!!")
+    time.sleep(1)
     with picamera.PiCamera() as camera:
         camera.resolution = (1024, 768)
-        camera.vflip = False
         camera.start_preview()
         # Camera warm-up time
         time.sleep(1)

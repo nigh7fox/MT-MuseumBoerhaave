@@ -3,7 +3,7 @@ from twython import Twython
 from twython import TwythonStreamer
 from datetime import datetime
 
-time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+time = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 APP_KEY = "96Tt52kGGi9TKPK3ytUnB9qa7"
 APP_SECRET = "fEB5Oh3GaqVIPxRzPqdKIVgV5HiAI0NLkXBjzqPaVykDddNZv2"
 
@@ -15,7 +15,7 @@ twitter = Twython(APP_KEY, APP_SECRET, ACCESS_TOKEN, ACCESS_KEY)
 
 
 def tweet_with_photo(url):
-    user_tweet = "This motherfucker just played my motherfucking game! This is motherfucking great! YES! @"
+    user_tweet = "This user just played Telescopia! @ "
     try:
         photo = open(str(url), 'rb')
         response = twitter.upload_media(media=photo)

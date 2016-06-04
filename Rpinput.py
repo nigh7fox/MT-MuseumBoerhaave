@@ -9,37 +9,26 @@ import Bhgame as bhgame
 
 class RpiBoerhaave(object):
 
-    def __init__(self, button_pin1, button_pin2, led_pin1, led_pin2, ldr_pin):
+    def __init__(self, button_pin1, button_pin2, led_pin1, led_pin2, led_pin3, ldr_pin, switch_pin):
         self.button_one = button_pin1
         self.button_two = button_pin2
         self.led_pin1 = led_pin1
         self.led_pin2 = led_pin2
+        self.led_pin3 = led_pin3
         self.ldr_pin = ldr_pin
+        self.switch_pin = switch_pin
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         GPIO.setup(self.button_one, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.button_two, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.switch_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.led_pin1, GPIO.OUT)
         GPIO.setup(self.led_pin2, GPIO.OUT)
         GPIO.setup(self.ldr_pin, GPIO.OUT)
+        GPIO.setup(self.led_pin3, GPIO.OUT)
 
     def remove_static(self):
         pass
-
-    def get_ldr_state(self):
-        GPIO.setup(self.ldr_pin, GPIO.OUT)
-        GPIO.output(self.ldr_pin, GPIO.LOW)
-        time.sleep(0.1)
-
-        GPIO.setup(self.ldr_pin, GPIO.IN)
-        try:
-            while True:
-                while GPIO.event_detected(self.ldr_pin) is False:
-                    return True
-                return False
-        except KeyboardInterrupt:
-            GPIO.cleanup()
-            GPIO.remove_event_detect(self.ldr_pin)
 
     def ldr_state(self):
         GPIO.setup(self.ldr_pin, GPIO.OUT)
@@ -125,9 +114,28 @@ class RpiBoerhaave(object):
     def led_ready_state(self):
         self.turn_light_off(self.led_pin2)
         time.sleep(0.2)
+        self.turn_light_off(self.led_pin3)
+        time.sleep(0.2)
         self.turn_light_on(self.led_pin1)
 
     def led_not_ready_state(self):
         self.turn_light_off(self.led_pin1)
         time.sleep(0.2)
+        self.turn_light_off(self.led_pin3)
+        time.sleep(0.2)
         self.turn_light_on(self.led_pin2)
+
+    def led_busy_state(self):
+        self.turn_light_off(self.led_pin1)
+        time.sleep(0.2)
+        self.turn_light_off(self.led_pin2)
+        time.sleep(0.2)
+        self.turn_light_on(self.led_pin3)
+
+    def get_object_state(self):
+        obj_state = self.button_state(self.switch_pin)
+        time.sleep(0.2)
+        if obj_state is True:
+            return False
+        else:
+            return True
