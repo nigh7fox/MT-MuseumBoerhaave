@@ -1,2 +1,5 @@
 # MT-MuseumBoerhaave
+
+THIS YOUNG MAN WILL BE AS UNFEELING, AS UNTHINKING AS DEAD UNTIL THE DAY HE JOINS THEM.
+
 Eind Project Media Technologie
