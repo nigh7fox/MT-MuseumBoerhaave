@@ -13,8 +13,11 @@ class GameThread(object):
                                         led_three_pin, ldr_pin, switch_pin)
 
     def run(self):
-        self.rpi.led_ready_state()
-        self.are_you_ready()
+        try:
+            self.rpi.led_ready_state()
+            self.are_you_ready()
+        except KeyboardInterrupt:
+            GPIO.cleanup()
 
     def remove_static(self):
         pass
@@ -61,13 +64,16 @@ class GameThread(object):
         os.system("omxplayer %s.mp4" % film_name)
 
     def are_you_ready(self):
-        while True:
-            active_btn = self.rpi.button_state(self.rpi.button_one)
-            if active_btn is True:
-                self.play_game()
-                return None
-            else:
-                pass
+        try:
+            while True:
+                active_btn = self.rpi.button_state(self.rpi.button_one)
+                if active_btn is True:
+                    self.play_game()
+                    return None
+                else:
+                    pass
+        except KeyboardInterrupt:
+            GPIO.cleanup()
 
     def game_part_one(self):
         self.rpi.led_busy_state()

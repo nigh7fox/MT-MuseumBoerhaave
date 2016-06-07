@@ -111,31 +111,28 @@ class RpiBoerhaave(object):
         except KeyboardInterrupt:
             GPIO.cleanup()
 
+    def led_list(self):
+        led_list = (self.led_pin1,
+                    self.led_pin2,
+                    self.led_pin3)
+        return led_list
+
     def led_ready_state(self):
-        self.turn_light_off(self.led_pin2)
-        time.sleep(0.2)
-        self.turn_light_off(self.led_pin3)
-        time.sleep(0.2)
-        self.turn_light_on(self.led_pin1)
+        GPIO.output(self.led_list(), (GPIO.HIGH, GPIO.LOW, GPIO.LOW))
 
     def led_not_ready_state(self):
-        self.turn_light_off(self.led_pin1)
-        time.sleep(0.2)
-        self.turn_light_off(self.led_pin3)
-        time.sleep(0.2)
-        self.turn_light_on(self.led_pin2)
+        GPIO.output(self.led_list(), (GPIO.LOW, GPIO.HIGH, GPIO.LOW))
 
     def led_busy_state(self):
-        self.turn_light_off(self.led_pin1)
-        time.sleep(0.2)
-        self.turn_light_off(self.led_pin2)
-        time.sleep(0.2)
-        self.turn_light_on(self.led_pin3)
+        GPIO.output(self.led_list(), (GPIO.LOW, GPIO.LOW, GPIO.HIGH))
 
     def get_object_state(self):
         obj_state = self.button_state(self.switch_pin)
         time.sleep(0.2)
-        if obj_state is True:
-            return False
-        else:
-            return True
+        try:
+            if obj_state is True:
+                return False
+            else:
+                return True
+        except KeyboardInterrupt:
+            GPIO.cleanup()

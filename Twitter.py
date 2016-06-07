@@ -14,12 +14,11 @@ ACCESS_KEY = "lkNCMtVklkzgxdkg4P21KzJX2Z35RhIJidOdFhAcINN93"
 twitter = Twython(APP_KEY, APP_SECRET, ACCESS_TOKEN, ACCESS_KEY)
 
 
-def tweet_with_photo(url):
-    user_tweet = "This user just played Telescopia! @ "
+def tweet_with_photo(url, bh_tweet):
     try:
         photo = open(str(url), 'rb')
         response = twitter.upload_media(media=photo)
-        twitter.update_status(status=user_tweet + time, media_ids=[response['media_id']])
+        twitter.update_status(status=bh_tweet + time, media_ids=[response['media_id']])
     except twython.TwythonError:
         print("Error has occurred while uploading tweet.. this is bad.")
     else:

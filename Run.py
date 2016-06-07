@@ -1,5 +1,6 @@
 import Rpinput
 import Bhgame
+import Camera
 
 #   PINS
 button_one_pin = 16
@@ -24,6 +25,7 @@ def start_game():
         while game_started is False and ldr_state is True:
             game_bh.run()
             game_started = True
+            Camera.picture_to_twitter("Put what the message should say here! Time is default in the message.")
         rpi.led_not_ready_state()
 
 start_game()
