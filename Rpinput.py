@@ -126,13 +126,11 @@ class RpiBoerhaave(object):
     def led_busy_state(self):
         GPIO.output(self.led_list(), (GPIO.LOW, GPIO.LOW, GPIO.HIGH))
 
-    def get_object_state(self):
-        obj_state = self.button_state(self.switch_pin)
-        time.sleep(0.2)
-        try:
-            if obj_state is True:
-                return False
-            else:
-                return True
-        except KeyboardInterrupt:
-            GPIO.cleanup()
+    def check_user(self, timer):
+        user_count = 0
+        while True:
+            while self.ldr_state() is False:
+                user_count += 1
+                if user_count is timer:
+                    return True
+            return False

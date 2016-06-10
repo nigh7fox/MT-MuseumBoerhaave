@@ -1,6 +1,5 @@
 import Rpinput
 import Bhgame
-import Camera
 
 #   PINS
 button_one_pin = 16
@@ -18,14 +17,13 @@ rpi = Rpinput.RpiBoerhaave(button_one_pin, button_two_pin, led_one_pin, led_two_
 #   USE THIS FUNCTION TO START THE GAME.
 def start_game():
     game_bh = Bhgame.GameThread(button_one_pin, button_two_pin, led_one_pin, led_two_pin, led_three_pin, ldr_pin, switch_pin)
-    game_started = False
     while True:
         game_started = False
-        ldr_state = rpi.ldr_state()
-        while game_started is False and ldr_state is True:
+        #   ldr_state = rpi.ldr_state()
+        while game_started is False and rpi.check_user(5) is True:
             game_bh.run()
             game_started = True
-            Camera.picture_to_twitter("Put what the message should say here! Time is default in the message.")
+            print("Game over...")
         rpi.led_not_ready_state()
 
 start_game()
