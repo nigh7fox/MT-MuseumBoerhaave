@@ -3,6 +3,14 @@ import Bhgame
 import RPi.GPIO as GPIO
 import time
 
+"""
+THIS PY FILE IS USED TO START THE GAME.
+COMBINING RPINPUT & BHGAME TO CREATE THE GAME.
+
+FIRST IMPORT THE TWO CLASSES.
+THEN RUN START_GAME.
+"""
+
 #   PINS
 button_one_pin = 26
 button_two_pin = 12
@@ -41,16 +49,6 @@ def start_game():
     except KeyboardInterrupt:
         GPIO.cleanup()
 
-"""
-def pre_game():
-    rpi.led_not_ready_state()
-    game_bh.display_still("bg")
-    while True:
-        switch_state = rpi.button_state(button_one_pin)
-        if switch_state is True:
-            time.sleep(2)
-            start_game()
-"""
 #   MAGIC.
 rpi.led_not_ready_state()
 start_game()

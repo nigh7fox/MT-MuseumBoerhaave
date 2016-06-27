@@ -5,6 +5,20 @@ import Rpinput
 
 
 class GameThread(object):
+    """
+
+    THIS PY FILE CONTAINS THE GAME WORKER.
+
+    THIS CLASS USES THE RPINPUT FILE TO GET INPUT FROM THE RASPBERRY PI AND USES THAT,
+    INPUT TO CHANGE THE ROUTE THE GAME TAKES. EACH QUESTION AND ANSWER REPRESENT DIFFERENT VIDEOS.
+
+    ALL VIDEO FILES ARE INSIDE THE GAME_LIST FUNCTION. USE THIS LIST TO PLAY SELECTED VIDEOS.
+    GAME IS SPLIT INTO TWO PARTS. EACH PART REPRESENTING A QUESTION.
+
+    USE FBI (FRAME BUFFER IMAGE) TO OPEN IMAGE FILES. AND KILLS THE FBI PROCESS AT THE END.
+
+    """
+
     def __init__(self, button_pin1, button_pin2, button_pin3, led_one_pin, led_two_pin, led_three_pin, switch_pin):
         self.rpi = Rpinput.RpiBoerhaave(button_pin1, button_pin2, button_pin3, led_one_pin, led_two_pin,
                                         led_three_pin, switch_pin)

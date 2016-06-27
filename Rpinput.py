@@ -3,6 +3,14 @@ import time
 
 
 class RpiBoerhaave(object):
+    """
+
+    THIS PY FILE CONTAINS THE CONNECTIONS BETWEEN THE RASPBERRY PI AND PYTHON.
+
+    THIS PART OF THE GAME  MADE INTO A CLASS, BECAUSE THE PINS REQUIRE INITIALIZATION(SETUP) BEFORE USE.
+    HERE YOU GET ALL INPUTS AND EXECUTE ALL OUTPUTS RELATED TO THE RASPBERRY PI.
+
+    """
 
     def __init__(self, button_pin1, button_pin2, button_pin3, led_pin1, led_pin2, led_pin3, switch_pin):
         self.button_one = button_pin1
