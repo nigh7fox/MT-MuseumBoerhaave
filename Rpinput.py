@@ -57,7 +57,6 @@ class RpiBoerhaave(object):
                 return 3
             else:
                 return None  # NO BUTTON IS BEING PRESSED.
-
         except KeyboardInterrupt:
             GPIO.cleanup()
         GPIO.cleanup()
@@ -98,7 +97,3 @@ class RpiBoerhaave(object):
 
     def all_led_off(self):
         GPIO.output(self.led_list(), (GPIO.LOW, GPIO.LOW, GPIO.LOW))
-
-    def check_user(self, timer):
-        self.remove_static()
-        return None
